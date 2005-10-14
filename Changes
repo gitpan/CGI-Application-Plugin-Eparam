@@ -1,0 +1,6 @@
+Revision history for Perl extension CGI::Application::Plugin::Eparam.
+
+0.01  Fri Oct 14 17:26:23 2005
+	- original version; created by h2xs 1.23 with options
+		-AX -n CGI::Application::Plugin::Eparam
+
