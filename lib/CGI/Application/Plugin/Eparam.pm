@@ -11,7 +11,7 @@ use 5.004;
 use strict;
 use Carp;
 
-$CGI::Application::Plugin::Eparam::VERSION = '0.01';
+$CGI::Application::Plugin::Eparam::VERSION = '0.02';
 
 sub import {
 	my $class = shift;
@@ -89,25 +89,60 @@ CGI::Application::Plugin::Eparam
 
 =head1 SYNOPSIS
 
-package WebApp
-use Jcode;# or use Encode or $CGI::Application::Plugin::Eparam::econv = sub { ... }
-use CGI::Application::Plugin::Eparam;
-sub cgiapp_init {
-        $CGI::Application::Plugin::Eparam::icode = 'sjis';   # input code
-        $CGI::Application::Plugin::Eparam::ocode = 'euc-jp'; # want  code
-}
+    package WebApp
+    use Jcode;# or use Encode or $CGI::Application::Plugin::Eparam::econv = sub { ... }
+    use CGI::Application::Plugin::Eparam;
+    sub cgiapp_init {
+            $CGI::Application::Plugin::Eparam::icode = 'sjis';   # input code
+            $CGI::Application::Plugin::Eparam::ocode = 'euc-jp'; # want  code
+    }
+
+=head1 Example
+
+=head2 Application
+
+    package WebApp
+    use Jcode;# or use Encode or $CGI::Application::Plugin::Eparam::econv = sub { ... }
+    use CGI::Application::Plugin::Eparam;
+    sub cgiapp_init {
+            $CGI::Application::Plugin::Eparam::icode = 'sjis';   # input code
+            $CGI::Application::Plugin::Eparam::ocode = 'euc-jp'; # want  code
+    }
+
+=head2 SubClass
+
+    package WebApp::Pages::Public
+    sub setup {
+            $CGI::Application::Plugin::Eparam::icode = 'sjis';
+            $CGI::Application::Plugin::Eparam::ocode = 'euc-jp';
+    }
+    package WebApp::Pages::Admin
+    sub setup {
+            $CGI::Application::Plugin::Eparam::icode = 'euc-jp';
+            $CGI::Application::Plugin::Eparam::ocode = 'euc-jp';
+    }
+
+=head2 Method
+
+    package WebApp::Pages::User::Mailform
+    sub mailform {
+
+            # this case is no convert
+            $CGI::Application::Plugin::Eparam::icode = 'jis';
+            $CGI::Application::Plugin::Eparam::ocode = 'jis';
+
+            # The thing used for the character-code conversion before Mail Sending can be done. 
+            $CGI::Application::Plugin::Eparam::icode = 'sjis';
+            $CGI::Application::Plugin::Eparam::ocode = 'jis';
+
+    }
 
 =head1 SEE ALSO
 
-=over 1
-
-=item o 
-
 L<CGI::Application>
-
-=back
 
 =head1 AUTHOR
 
+Shinichiro Aska
 
 =cut
