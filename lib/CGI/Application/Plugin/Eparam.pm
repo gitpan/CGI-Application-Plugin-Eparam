@@ -11,6 +11,8 @@ use 5.004;
 use strict;
 use Carp;
 
+$CGI::Application::Plugin::Eparam::VERSION = '0.01';
+
 sub import {
 	my $class = shift;
 	my $caller = caller;
@@ -58,7 +60,7 @@ sub eparam {
 	
 	my $icode = $CGI::Application::Plugin::Eparam::temp_icode || $CGI::Application::Plugin::Eparam::icode;
 	my $ocode = $CGI::Application::Plugin::Eparam::temp_ocode || $CGI::Application::Plugin::Eparam::ocode;
-	my $econv = $CGI::Application::Plugin::Eparam::temp_ecode || $CGI::Application::Plugin::Eparam::econv;
+	my $econv = $CGI::Application::Plugin::Eparam::temp_econv || $CGI::Application::Plugin::Eparam::econv;
 	
 	carp "icode:".$icode if $debug;
 	carp "ocode:".$ocode if $debug;
@@ -78,3 +80,34 @@ sub eparam {
 }
 
 1;
+
+=pod
+
+=head1 Name
+
+CGI::Application::Plugin::Eparam
+
+=head1 SYNOPSIS
+
+package WebApp
+use Jcode;# or use Encode or $CGI::Application::Plugin::Eparam::econv = sub { ... }
+use CGI::Application::Plugin::Eparam;
+sub cgiapp_init {
+        $CGI::Application::Plugin::Eparam::icode = 'sjis';   # input code
+        $CGI::Application::Plugin::Eparam::ocode = 'euc-jp'; # want  code
+}
+
+=head1 SEE ALSO
+
+=over 1
+
+=item o 
+
+L<CGI::Application>
+
+=back
+
+=head1 AUTHOR
+
+
+=cut
