@@ -1,11 +1,11 @@
 package CGI::Application::Plugin::Eparam;
 
 #=====================================================================
-# 日本語環境でparamの値を事前に変換する
+# CGI::Application::Plugin::Eparam
 #---------------------------------------------------------------------
-# 作成    : 2005/06/22 aska
+# make    : 2005/06/22 aska
 #---------------------------------------------------------------------
-# $Id: Eparam.pm 17 2005-07-01 08:39:11Z aska $
+# $Id$
 #=====================================================================
 use 5.004;
 use strict;
@@ -32,18 +32,15 @@ sub import {
 }
 
 #=====================================================================
-# 変換後のparamを返す
+# Get Value
 #---------------------------------------------------------------------
-# 引数    :key名
-# 戻り値  :文字コード変換後のvalue値
-# 使用例  :my $val = $self->eparam('key');
+# args     :key
+# return   :convert value
+# example  :my $val = $self->eparam('key');
 #=====================================================================
 sub eparam {
 	my $self = shift;
 	
-	#-----------------------------
-	# 変換ロジックの実装
-	#-----------------------------
 	unless ( $CGI::Application::Plugin::Eparam::econv ) {
 		if ( $Encode::VERSION ) {                              # Encode.pm
 			$CGI::Application::Plugin::Eparam::econv = 
@@ -96,10 +93,25 @@ CGI::Application::Plugin::Eparam
             $CGI::Application::Plugin::Eparam::icode = 'sjis';   # input code
             $CGI::Application::Plugin::Eparam::ocode = 'euc-jp'; # want  code
     }
+    package WebApp::Pages::Public
+    sub page1 {
+            my $self = shift;
+            my $data = $self->eparam('data');               # convert data
+            my $natural_data = $self->query->param('data'); # data
+    }
 
 =head1 Example
 
-=head2 Application
+=head2 Get Value
+
+    package WebApp::Pages::Public
+    sub page1 {
+            my $self = shift;
+            my $data = $self->eparam('data');               # convert data
+            my $natural_data = $self->query->param('data'); # data
+    }
+
+=head2 in Application
 
     package WebApp
     use Jcode;# or use Encode or $CGI::Application::Plugin::Eparam::econv = sub { ... }
@@ -109,7 +121,7 @@ CGI::Application::Plugin::Eparam
             $CGI::Application::Plugin::Eparam::ocode = 'euc-jp'; # want  code
     }
 
-=head2 SubClass
+=head2 in SubClass
 
     package WebApp::Pages::Public
     sub setup {
@@ -122,7 +134,7 @@ CGI::Application::Plugin::Eparam
             $CGI::Application::Plugin::Eparam::ocode = 'euc-jp';
     }
 
-=head2 Method
+=head2 in Method
 
     package WebApp::Pages::User::Mailform
     sub mailform {
@@ -136,6 +148,43 @@ CGI::Application::Plugin::Eparam
             $CGI::Application::Plugin::Eparam::ocode = 'jis';
 
     }
+
+=head2 in Part
+
+    package Myapplication::Pages::User::Mailform
+    sub mailform {
+
+            # temp_ocode are given to priority more than ocode.
+            $CGI::Application::Plugin::Eparam::temp_icode = 'sjis';
+            $CGI::Application::Plugin::Eparam::temp_ocode = 'jis';
+            my $val_jis = $self->eparam('val');
+            # It returns it.
+            undef $CGI::Application::Plugin::Eparam::temp_icode;
+            undef $CGI::Application::Plugin::Eparam::temp_ocode;
+            my $val_sjis = $self->eparam('val');
+
+    }
+
+=head2 Convert Logic Customize
+
+    # It is very effective.
+    $CGI::Application::Plugin::Eparam::econv = sub {
+            my $textref = shift; 
+            my $ocode = shift;   # output character code
+            my $icode = shift;   # input  character code
+            # some logic
+            Encode::from_to($$textref, 'Guess', $ocode);
+    };
+    # It is temporarily effective.
+    $CGI::Application::Plugin::Eparam::temp_econv = sub {
+            my $textref = shift; 
+            my $ocode = shift;   # output character code
+            my $icode = shift;   # input  character code
+            # some logic
+            Encode::from_to($$textref, 'Guess', $ocode);
+    };
+    # It returns to the processing of the standard.
+    undef $CGI::Application::Plugin::Eparam::temp_econv;
 
 =head1 SEE ALSO
 
