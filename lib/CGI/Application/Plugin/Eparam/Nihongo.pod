@@ -7,17 +7,17 @@ CGI::Application::Plugin::Eparam::Nihongo
 =head1 SYNOPSIS
 
     package WebApp
-    use Jcode;# &#12371;&#12398;&#20182; use Encode &#12377;&#12427;&#12363;&#12289;&#33258;&#21069;&#12391; $CGI::Application::Plugin::Eparam::econv = sub { ... } &#12392;&#12289;&#22793;&#25563;&#12525;&#12472;&#12483;&#12463;&#12434;&#23455;&#35013;&#12377;&#12427;
+    use Jcode;# この他 use Encode するか、自前で $CGI::Application::Plugin::Eparam::econv = sub { ... } と、変換ロジックを実装する
     use CGI::Application::Plugin::Eparam;
     sub cgiapp_init {
-            $CGI::Application::Plugin::Eparam::icode = 'sjis';   # &#20837;&#21147;&#12373;&#12428;&#12427;&#25991;&#23383;&#12467;&#12540;&#12489;
-            $CGI::Application::Plugin::Eparam::ocode = 'euc-jp'; # &#22793;&#25563;&#12375;&#12383;&#12356;&#25991;&#23383;&#12467;&#12540;&#12489;
+            $CGI::Application::Plugin::Eparam::icode = 'sjis';   # 入力される文字コード
+            $CGI::Application::Plugin::Eparam::ocode = 'euc-jp'; # 変換したい文字コード
     }
     package WebApp::Pages::Public
     sub page1 {
             my $self = shift;
-            my $data = $self->eparam('data');               # &#22793;&#25563;&#24460;&#12398;&#20516;
-            my $natural_data = $self->query->param('data'); # &#22793;&#25563;&#21069;&#12398;&#20516;
+            my $data = $self->eparam('data');               # 変換後の値
+            my $natural_data = $self->query->param('data'); # 変換前の値
     }
 
 =head1 Example
@@ -59,11 +59,11 @@ CGI::Application::Plugin::Eparam::Nihongo
     package WebApp::Pages::User::Mailform
     sub mailform {
 
-            # &#12371;&#12398;&#22580;&#21512;&#22793;&#25563;&#12399;&#34892;&#12431;&#12428;&#12414;&#12379;&#12435;
+            # この場合変換は行われません
             $CGI::Application::Plugin::Eparam::icode = 'jis';
             $CGI::Application::Plugin::Eparam::ocode = 'jis';
 
-            # &#12513;&#12540;&#12523;&#12398;&#20214;&#21517;&#12395;&#12375;&#12383;&#12356;&#37096;&#20998;&#12384;&#12369;&#12434;jis&#12391;&#24471;&#12427;&#12424;&#12358;&#12394;&#20107;&#12364;&#20986;&#26469;&#12414;&#12377;
+            # メールの件名にしたい部分だけをjisで得るような事が出来ます
             $CGI::Application::Plugin::Eparam::icode = 'sjis';
             $CGI::Application::Plugin::Eparam::ocode = 'jis';
 
@@ -74,11 +74,11 @@ CGI::Application::Plugin::Eparam::Nihongo
     package Myapplication::Pages::User::Mailform
     sub mailform {
 
-            # &#19968;&#26178;&#30340;&#12395;&#35373;&#23450;&#12434;&#22793;&#26356;&#12377;&#12427;&#20107;&#12364;&#20986;&#26469;&#12414;&#12377;
+            # 一時的に設定を変更する事が出来ます
             $CGI::Application::Plugin::Eparam::temp_icode = 'sjis';
             $CGI::Application::Plugin::Eparam::temp_ocode = 'jis';
             my $val_jis = $self->eparam('val');
-            # undef&#12391;&#20803;&#12395;&#25147;&#12379;&#12414;&#12377;
+            # undefで元に戻せます
             undef $CGI::Application::Plugin::Eparam::temp_icode;
             undef $CGI::Application::Plugin::Eparam::temp_ocode;
             my $val_sjis = $self->eparam('val');
@@ -87,7 +87,7 @@ CGI::Application::Plugin::Eparam::Nihongo
 
 =head2 Convert Logic Customize
 
-    # &#33258;&#20998;&#12391;&#22793;&#25563;&#12525;&#12472;&#12483;&#12463;&#12434;&#32068;&#12416;&#20107;&#12364;&#20986;&#26469;&#12414;&#12377;
+    # 自分で変換ロジックを組む事が出来ます
     $CGI::Application::Plugin::Eparam::econv = sub {
             my $textref = shift; 
             my $ocode = shift;   # output character code
@@ -95,7 +95,7 @@ CGI::Application::Plugin::Eparam::Nihongo
             # some logic
             Encode::from_to($$textref, 'Guess', $ocode);
     };
-    # temp_&#12434;&#20351;&#12358;&#12392;&#19968;&#26178;&#30340;&#12394;&#12418;&#12398;&#12395;&#12394;&#12426;&#12414;&#12377;
+    # temp_を使うと一時的なものになります
     $CGI::Application::Plugin::Eparam::temp_econv = sub {
             my $textref = shift; 
             my $ocode = shift;   # output character code
@@ -103,7 +103,7 @@ CGI::Application::Plugin::Eparam::Nihongo
             # some logic
             Encode::from_to($$textref, 'Guess', $ocode);
     };
-    # undef&#12391;&#20803;&#12395;&#25147;&#12375;&#12414;&#12377;
+    # undefで元に戻します
     undef $CGI::Application::Plugin::Eparam::temp_econv;
 
 =head1 SEE ALSO
