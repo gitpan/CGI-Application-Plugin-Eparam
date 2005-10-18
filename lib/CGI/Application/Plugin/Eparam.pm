@@ -11,7 +11,7 @@ use 5.004;
 use strict;
 use Carp;
 
-$CGI::Application::Plugin::Eparam::VERSION = '0.03';
+$CGI::Application::Plugin::Eparam::VERSION = '0.04';
 
 sub import {
 	my $class = shift;

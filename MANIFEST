@@ -1,7 +1,8 @@
 Changes
+lib/CGI/Application/Plugin/Eparam.pm
+lib/CGI/Application/Plugin/Nihongo.pod
 Makefile.PL
 MANIFEST
+META.yml
 README
-Nihongo.pod
 t/CGI-Application-Plugin-Eparam.t
-lib/CGI/Application/Plugin/Eparam.pm

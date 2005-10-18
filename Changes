@@ -1,5 +1,8 @@
 Revision history for Perl extension CGI::Application::Plugin::Eparam.
 
+0.04  2005/10/18 12:15:00
+      write Nihongo pod.
+
 0.03  2005/10/18 09:39:00
       write pod.
 
